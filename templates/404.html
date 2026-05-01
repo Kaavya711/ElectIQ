@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}404 — Page Not Found | ElectIQ{% endblock %}
+
+{% block content %}
+<main id="main-content"
+    style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px;">
+    <div style="text-align:center; max-width:480px;">
+        <div style="font-size:80px; margin-bottom:24px;" aria-hidden="true">🗳️</div>
+        <h1 style="font-size:48px; margin-bottom:16px;">404</h1>
+        <h2 style="font-size:24px; margin-bottom:16px;">Page Not Found</h2>
+        <p class="muted" style="margin-bottom:32px;">This polling booth doesn't exist. Try heading back to the homepage.
+        </p>
+        <a href="{{ url_for('main.index') }}" class="btn-primary" style="padding:14px 32px; font-size:16px;">
+            ← Back to ElectIQ
+        </a>
+    </div>
+</main>
+{% endblock %}

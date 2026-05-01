@@ -1,0 +1,78 @@
+{% extends "dashboard.html" %}
+
+{% block dashboard_content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/quiz.css') }}">
+
+<div class="quiz-container">
+    <!-- START SCREEN -->
+    <div id="quiz-start-screen" class="card text-center" style="padding: 60px 40px;">
+        <div style="font-size: 80px; margin-bottom: 24px;">{{ country.emoji }}</div>
+        <h2 style="font-size: 36px; margin-bottom: 16px;">{{ country.name }} Election Quiz</h2>
+        <p class="muted" style="font-size: 18px; margin-bottom: 8px;">5 questions · Test your knowledge</p>
+        <span class="badge" style="margin-bottom: 40px;">Mixed Difficulty</span>
+        <br>
+        <button id="start-quiz-btn" class="btn-primary" style="font-size: 18px; padding: 16px 40px;">Start Quiz &rarr;</button>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div id="quiz-question-screen" class="hidden">
+        <div class="quiz-progress-wrap">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; color: var(--color-primary);">
+                <span>Question <span id="quiz-progress-text">1 / 5</span></span>
+            </div>
+            <div class="quiz-progress-bar">
+                <div id="quiz-progress-fill" class="quiz-progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 id="quiz-question-text" class="quiz-question">Question text goes here?</h2>
+            
+            <div id="quiz-options-container" class="quiz-options">
+                <!-- Options injected by JS -->
+            </div>
+
+            <div id="quiz-explanation" class="quiz-explanation">
+                <!-- Explanation text -->
+            </div>
+
+            <div style="text-align: right; margin-top: 24px;">
+                <button id="quiz-next-btn" class="btn-primary" style="display: none;">Next Question &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="quiz-result-screen" class="hidden">
+        <div class="card" style="padding: 40px;">
+            <h2 class="text-center" style="font-size: 24px;">Quiz Complete!</h2>
+            <div id="result-score-text" class="quiz-result-score">X / 5</div>
+            <div id="result-badge" class="quiz-result-badge">Badge Text</div>
+            
+            <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 40px;">
+                <button id="share-btn" class="btn-outline">📤 Share Result</button>
+                <button id="retry-btn" class="btn-primary">🔄 Try Again</button>
+            </div>
+
+            <h3 style="margin-bottom: 20px; font-size: 20px; border-bottom: 2px solid var(--color-bg); padding-bottom: 10px;">Review Answers</h3>
+            <div id="result-breakdown">
+                <!-- Breakdown injected by JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+<script>
+    document.getElementById('share-btn')?.addEventListener('click', () => {
+        const score = document.getElementById('result-score-text').textContent.split(' / ')[0];
+        const text = `I scored ${score}/5 on the {{ country.name }} Election Quiz on ElectIQ! 🗳️ Test your knowledge: ${window.location.href}`;
+        if (navigator.share) {
+            navigator.share({ title: 'ElectIQ Quiz', text: text, url: window.location.href });
+        } else {
+            navigator.clipboard.writeText(text);
+            alert("Copied to clipboard!");
+        }
+    });
+</script>
+{% endblock %}

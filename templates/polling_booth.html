@@ -1,0 +1,70 @@
+{% extends "dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="header-section" style="margin-bottom: 24px;">
+    <span class="badge">🗺️ POLLING BOOTH FINDER</span>
+    <h2 style="margin: 16px 0 8px; font-size: 32px;">Find Your Nearest Polling Booth</h2>
+    <p class="muted">Enter your pincode to locate booths near you.</p>
+</div>
+
+{% if country.code == 'IN' %}
+<div class="grid grid-cols-2" style="gap: 32px; align-items: start;">
+    <!-- Left panel -->
+    <div class="card" style="display: flex; flex-direction: column; gap: 16px;">
+        <div>
+            <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px;">Enter your 6-digit pincode</label>
+            <input type="number" id="pincode-input" class="custom-country-input" placeholder="e.g., 110001" style="width: 100%; border: 1px solid #D1D5DB; padding: 12px; border-radius: var(--radius);" max="999999">
+        </div>
+        
+        <div>
+            <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px;">Select State</label>
+            <select id="state-select" class="custom-country-input" style="width: 100%; border: 1px solid #D1D5DB; padding: 12px; border-radius: var(--radius);">
+                <option value="">Choose...</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <!-- Simplified list for demo -->
+            </select>
+        </div>
+        
+        <button id="find-booth-btn" class="btn-primary" style="margin-top: 8px; padding: 14px;">Find Booths 🔍</button>
+        
+        <div id="map-error" style="display: none; color: #D32F2F; background: #FFEBEE; padding: 12px; border-radius: 8px; font-size: 14px;"></div>
+        
+        <div id="booth-results" style="margin-top: 16px; max-height: 400px; overflow-y: auto;">
+            <p class="muted text-center" style="margin-top: 40px;">Results will appear here.</p>
+        </div>
+    </div>
+
+    <!-- Right panel: Map -->
+    <div class="card" style="padding: 0; overflow: hidden; height: 600px; position: relative;">
+        <div id="map-container" style="width: 100%; height: 100%; background: #E5E7EB; display: flex; align-items: center; justify-content: center;">
+            <p class="muted">Loading map...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Load Google Maps Script -->
+{% if config.GOOGLE_MAPS_API_KEY %}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config.GOOGLE_MAPS_API_KEY }}&callback=initMap"></script>
+{% else %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('map-container').innerHTML = '<p class="muted text-center" style="padding: 40px;">Map unavailable in development mode without API Key.</p>';
+    });
+</script>
+{% endif %}
+
+<!-- Load local maps JS -->
+<script src="{{ url_for('static', filename='js/maps.js') }}"></script>
+
+{% else %}
+<div class="card text-center" style="padding: 80px 20px;">
+    <div style="font-size: 64px; margin-bottom: 20px;">🚧</div>
+    <h3 style="margin-bottom: 16px;">Booth finder coming soon</h3>
+    <p class="muted">We are currently integrating location data for {{ country.name }}.<br>Please visit your official election authority website to find your polling location.</p>
+</div>
+{% endif %}
+{% endblock %}

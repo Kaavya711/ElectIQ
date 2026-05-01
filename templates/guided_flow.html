@@ -1,0 +1,39 @@
+{% extends "dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="header-section" style="margin-bottom: 40px;">
+    <span class="badge">🧭 STEP BY STEP</span>
+    <h2 style="margin: 16px 0 8px; font-size: 32px;">Guided Flow</h2>
+    <p class="muted">Follow a structured path tailored to who you are.</p>
+</div>
+
+<!-- Placeholder for Guided Flow, simplified for the demo -->
+<div class="card" style="display: flex; gap: 40px; min-height: 500px;">
+    <div class="step-list" style="width: 280px; border-right: 1px solid #E5E7EB; padding-right: 20px;">
+        <div style="margin-bottom: 20px; font-weight: bold; color: var(--color-primary)">Your Path</div>
+        <!-- Mocking steps based on role -->
+        <div class="step-item active" style="padding: 12px; background: var(--color-bg); border-radius: 8px; margin-bottom: 8px; font-weight: 600;">1. Check Status</div>
+        <div class="step-item" style="padding: 12px; margin-bottom: 8px; color: var(--color-text-muted);">2. Registration</div>
+        <div class="step-item" style="padding: 12px; margin-bottom: 8px; color: var(--color-text-muted);">3. Preparation</div>
+        <div class="step-item" style="padding: 12px; margin-bottom: 8px; color: var(--color-text-muted);">4. Polling Day</div>
+    </div>
+    
+    <div class="step-content" style="flex: 1; padding: 20px 0;">
+        <span class="badge" style="margin-bottom: 16px;">STEP 1</span>
+        <h3 style="font-size: 28px; margin-bottom: 16px;">Check Your Status</h3>
+        <p style="font-size: 16px; margin-bottom: 24px; color: var(--color-text-muted);">
+            Before doing anything else, you need to know where you stand. Check if you are currently registered in the system.
+        </p>
+        
+        <a href="https://electoralsearch.eci.gov.in" target="_blank" class="card" style="display: inline-block; padding: 16px 24px; border: 1px solid #E5E7EB; margin-bottom: 40px; background: #fafafa;">
+            <strong>Official Portal ↗</strong><br>
+            <span class="muted" style="font-size: 14px;">Visit the official search portal to verify your details.</span>
+        </a>
+        
+        <div style="display: flex; justify-content: space-between; border-top: 1px solid #E5E7EB; padding-top: 24px;">
+            <button class="btn-outline" disabled style="opacity: 0.5;">&larr; Previous</button>
+            <button class="btn-primary">Next Step &rarr;</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

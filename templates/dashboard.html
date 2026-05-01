@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - {{ country.name }} | ElectIQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 240px;
+        background-color: var(--color-primary);
+        color: var(--color-white);
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition);
+        position: fixed;
+        top: 0; bottom: 0; left: 0;
+        z-index: 100;
+    }
+
+    .sidebar-header {
+        padding: 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo {
+        font-family: var(--font-heading);
+        font-size: 24px;
+        color: var(--color-bg);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .country-display {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .btn-change-country {
+        background-color: var(--color-accent);
+        color: var(--color-primary);
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .nav-list {
+        list-style: none;
+        padding: 20px 0;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .nav-item {
+        display: block;
+        padding: 12px 24px;
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        transition: var(--transition);
+        border-left: 4px solid transparent;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .nav-item:hover, .nav-item.active {
+        background-color: rgba(255,255,255,0.05);
+        color: var(--color-white);
+        border-left-color: var(--color-accent);
+        padding-left: 28px;
+    }
+
+    .sidebar-footer {
+        padding: 24px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        font-size: 14px;
+    }
+
+    /* Main Content */
+    .main-content {
+        flex: 1;
+        margin-left: 240px;
+        padding: 40px;
+        background-color: var(--color-bg);
+        min-height: 100vh;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 40px;
+    }
+
+    .role-toggles {
+        background: var(--color-white);
+        padding: 4px;
+        border-radius: 50px;
+        display: inline-flex;
+        box-shadow: var(--shadow);
+    }
+
+    .role-pill {
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--color-text-muted);
+        transition: var(--transition);
+    }
+
+    .role-pill.active {
+        background-color: var(--color-accent);
+        color: var(--color-primary);
+    }
+
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: var(--color-primary);
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar { transform: translateX(-100%); }
+        .sidebar.open { transform: translateX(0); }
+        .main-content { margin-left: 0; padding: 20px; }
+        .menu-toggle { display: block; margin-right: auto; }
+        .top-bar { align-items: center; }
+        .role-toggles { display: none; } /* Hide on mobile to save space, or make compact */
+    }
+
+    /* Content Area Styles */
+    .content-area {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .welcome-card {
+        text-align: center;
+        padding: 60px 20px;
+        margin-bottom: 40px;
+    }
+
+    .quick-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+        .quick-links { grid-template-columns: 1fr; }
+    }
+
+    .quick-link-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+        color: var(--color-text);
+        font-weight: 600;
+    }
+    
+    .quick-link-card .arrow {
+        color: var(--color-primary);
+        transition: var(--transition);
+    }
+
+    .quick-link-card:hover .arrow {
+        color: var(--color-accent);
+        transform: translateX(4px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">ElectIQ 🗳️</div>
+            <div class="country-display">{{ country.emoji }} {{ country.name }}</div>
+            <a href="{{ url_for('main.index') }}" class="btn-change-country">Change Country</a>
+        </div>
+        <nav class="nav-list" role="navigation">
+            <a href="{{ url_for('main.dashboard', country_code=country.code) }}" class="nav-item {% if request.endpoint == 'main.dashboard' %}active{% endif %}">🏠 Dashboard</a>
+            <a href="{{ url_for('main.timeline', country_code=country.code) }}" class="nav-item {% if request.endpoint == 'main.timeline' %}active{% endif %}">📅 Timeline</a>
+            <a href="{{ url_for('main.guided_flow', country_code=country.code) }}" class="nav-item {% if request.endpoint == 'main.guided_flow' %}active{% endif %}">🧭 Guided Flow</a>
+            <a href="{{ url_for('main.checklist', country_code=country.code) }}" class="nav-item {% if request.endpoint == 'main.checklist' %}active{% endif %}">✅ My Checklist</a>
+            <a href="{{ url_for('main.myths', country_code=country.code) }}" class="nav-item {% if request.endpoint == 'main.myths' %}active{% endif %}">💡 Myth Buster</a>
+            <a href="{{ url_for('main.chat', country_code=country.code) }}" class="nav-item {% if request.endpoint == 'main.chat' %}active{% endif %}">🤖 Ask AI</a>
+            <a href="{{ url_for('main.quiz', country_code=country.code) }}" class="nav-item {% if request.endpoint == 'main.quiz' %}active{% endif %}">📝 Quiz</a>
+            <a href="{{ url_for('main.glossary', country_code=country.code) }}" class="nav-item {% if request.endpoint == 'main.glossary' %}active{% endif %}">📖 Glossary</a>
+            <a href="{{ url_for('main.resources', country_code=country.code) }}" class="nav-item {% if request.endpoint == 'main.resources' %}active{% endif %}">🔗 Resources</a>
+            <a href="{{ url_for('main.polling_booth', country_code=country.code) }}" class="nav-item {% if request.endpoint == 'main.polling_booth' %}active{% endif %}">🗺️ Polling Booth</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div id="google_translate_element"></div>
+            <p style="margin-top:10px; color:rgba(255,255,255,0.5);">🌐 Translate</p>
+        </div>
+    </aside>
+
+    <main class="main-content" id="main-content" role="main">
+        <div class="top-bar">
+            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">☰</button>
+            <div class="role-toggles">
+                <div class="role-pill {% if role == 'Voter' %}active{% endif %}" data-role="Voter">Voter</div>
+                <div class="role-pill {% if role == 'Candidate' %}active{% endif %}" data-role="Candidate">Candidate</div>
+                <div class="role-pill {% if role == 'Learner' %}active{% endif %}" data-role="Learner">Learner</div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            {% block dashboard_content %}
+            <div class="card welcome-card">
+                <div style="font-size: 80px; margin-bottom: 20px;">{{ country.emoji }}</div>
+                <h2>Welcome to {{ country.name }}'s Election Guide</h2>
+                <p class="muted" style="max-width: 500px; margin: 16px auto 0;">You're exploring as a <strong style="color:var(--color-primary)">{{ role }}</strong>. Choose a section from the left to begin or use the quick links below.</p>
+            </div>
+
+            <div class="quick-links">
+                <a href="{{ url_for('main.timeline', country_code=country.code) }}" class="card quick-link-card">
+                    <span>📅 Start the Timeline</span>
+                    <span class="arrow">&rarr;</span>
+                </a>
+                <a href="{{ url_for('main.guided_flow', country_code=country.code) }}" class="card quick-link-card">
+                    <span>🧭 Follow Guided Flow</span>
+                    <span class="arrow">&rarr;</span>
+                </a>
+                <a href="{{ url_for('main.checklist', country_code=country.code) }}" class="card quick-link-card">
+                    <span>✅ Open My Checklist</span>
+                    <span class="arrow">&rarr;</span>
+                </a>
+                <a href="{{ url_for('main.chat', country_code=country.code) }}" class="card quick-link-card">
+                    <span>🤖 Ask AI a Question</span>
+                    <span class="arrow">&rarr;</span>
+                </a>
+            </div>
+            {% endblock %}
+        </div>
+    </main>
+</div>
+{% endblock %}

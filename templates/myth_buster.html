@@ -1,0 +1,115 @@
+{% extends "dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="header-section" style="margin-bottom: 40px;">
+    <span class="badge">💡 MYTH BUSTER</span>
+    <h2 style="margin: 16px 0 8px; font-size: 32px;">Election Myths — Busted</h2>
+    <p class="muted">Common misconceptions, answered by AI.</p>
+</div>
+
+<div class="myth-list" style="display: flex; flex-direction: column; gap: 24px; margin-bottom: 60px;">
+    {% for myth in preloaded_myths %}
+    <div class="card myth-card" style="opacity: 0; transform: translateY(20px); animation: fadeInUp 0.5s ease forwards {{ loop.index * 0.1 }}s;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <h3 style="font-size: 18px; font-family: var(--font-body); display: flex; gap: 12px;">
+                <span style="color: var(--color-accent);">❓</span>
+                {{ myth.myth }}
+            </h3>
+            
+            {% if myth.verdict == 'TRUE' %}
+            <span class="badge" style="background: #E8F5E9; color: #2E7D32; border-color: #2E7D32;">✅ TRUE</span>
+            {% elif myth.verdict == 'FALSE' %}
+            <span class="badge" style="background: #FFEBEE; color: #C62828; border-color: #C62828;">❌ FALSE</span>
+            {% else %}
+            <span class="badge" style="background: #FFF8E1; color: #F57F17; border-color: #F57F17;">⚠️ PARTIAL</span>
+            {% endif %}
+        </div>
+        
+        <div style="padding: 16px; background: var(--color-bg); border-radius: 8px; margin-bottom: 12px;">
+            <p style="font-size: 15px; margin-bottom: 0;">{{ myth.explanation }}</p>
+        </div>
+        
+        {% if myth.source %}
+        <a href="{{ myth.source }}" target="_blank" style="font-size: 14px; font-weight: 600; text-decoration: underline;">Learn more ↗</a>
+        {% endif %}
+    </div>
+    {% else %}
+    <p class="muted">No myths available for this country yet.</p>
+    {% endfor %}
+</div>
+
+<!-- Custom Input -->
+<div class="card" style="border: 2px solid var(--color-primary);">
+    <h3 style="margin-bottom: 16px; font-family: var(--font-body);">Got another myth? Ask here &rarr;</h3>
+    <div style="display: flex; gap: 12px;">
+        <input type="text" id="myth-input" placeholder="e.g., Do I have to pay to vote?" style="flex: 1; padding: 12px 16px; border: 1px solid #D1D5DB; border-radius: var(--radius); font-family: var(--font-body); background: var(--color-bg);">
+        <button id="bust-btn" class="btn-primary">Bust It 🔍</button>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeInUp {
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('bust-btn');
+        const input = document.getElementById('myth-input');
+        const list = document.querySelector('.myth-list');
+        const countryCode = document.querySelector('meta[name="country_code"]')?.content || 'IN';
+
+        if(btn) {
+            btn.addEventListener('click', async () => {
+                const text = input.value.trim();
+                if(!text) return;
+
+                btn.textContent = 'Checking...';
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch('/api/bust-myth', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ myth: text, country: countryCode })
+                    });
+                    const data = await res.json();
+                    
+                    // Prepend new myth
+                    const div = document.createElement('div');
+                    div.className = 'card myth-card';
+                    div.style.border = '2px solid var(--color-accent)';
+                    
+                    let badgeHTML = '';
+                    if (data.verdict === 'TRUE') badgeHTML = '<span class="badge" style="background: #E8F5E9; color: #2E7D32; border-color: #2E7D32;">✅ TRUE</span>';
+                    else if (data.verdict === 'FALSE') badgeHTML = '<span class="badge" style="background: #FFEBEE; color: #C62828; border-color: #C62828;">❌ FALSE</span>';
+                    else badgeHTML = '<span class="badge" style="background: #FFF8E1; color: #F57F17; border-color: #F57F17;">⚠️ PARTIAL</span>';
+
+                    div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                            <h3 style="font-size: 18px; font-family: var(--font-body); display: flex; gap: 12px;">
+                                <span style="color: var(--color-accent);">❓</span>
+                                ${text}
+                            </h3>
+                            ${badgeHTML}
+                        </div>
+                        <div style="padding: 16px; background: var(--color-bg); border-radius: 8px; margin-bottom: 12px;">
+                            <p style="font-size: 15px; margin-bottom: 0;">${data.explanation || 'No explanation provided.'}</p>
+                        </div>
+                        ${data.source ? `<a href="${data.source}" target="_blank" style="font-size: 14px; font-weight: 600; text-decoration: underline;">Learn more ↗</a>` : ''}
+                    `;
+                    
+                    list.insertBefore(div, list.firstChild);
+                    input.value = '';
+                } catch(e) {
+                    alert("Error busting myth. Please try again.");
+                } finally {
+                    btn.textContent = 'Bust It 🔍';
+                    btn.disabled = false;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

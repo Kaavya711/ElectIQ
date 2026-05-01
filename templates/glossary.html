@@ -1,0 +1,102 @@
+{% extends "dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="header-section" style="margin-bottom: 40px;">
+    <span class="badge">📖 KEY TERMS</span>
+    <h2 style="margin: 16px 0 8px; font-size: 32px;">Election Glossary</h2>
+    <p class="muted">Plain-language definitions for every term you'll encounter.</p>
+</div>
+
+<div style="margin-bottom: 32px;">
+    <input type="text" id="glossary-search" placeholder="Search terms (e.g. EVM, Constituency)..." style="width: 100%; max-width: 500px; padding: 16px 20px; border: 2px solid var(--color-primary); border-radius: var(--radius); font-family: var(--font-body); font-size: 16px;">
+</div>
+
+<div class="grid grid-cols-3" id="glossary-grid">
+    {% for item in terms %}
+    <div class="card glossary-card" style="display: flex; flex-direction: column; height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <div>
+                <h3 class="term-name" style="font-size: 20px; margin-bottom: 4px;">{{ item.term }}</h3>
+                <div style="font-size: 12px; color: var(--color-accent); font-weight: bold; text-transform: uppercase;">{{ item.short }}</div>
+            </div>
+            <button class="bookmark-btn" style="background: none; border: none; font-size: 20px; padding: 0; opacity: 0.5; transition: opacity 0.2s;" aria-label="Bookmark" title="Save term">🔖</button>
+        </div>
+        
+        <p class="term-def" style="font-size: 14px; margin-bottom: 16px; flex: 1;">{{ item.definition }}</p>
+        
+        <div class="term-example hidden" style="background: var(--color-bg); padding: 12px; border-radius: 8px; font-size: 13px; font-style: italic; margin-bottom: 16px; border-left: 3px solid var(--color-accent);">
+            "{{ item.example }}"
+        </div>
+        
+        <button class="read-more-btn" style="background: none; border: none; color: var(--color-primary); font-size: 14px; padding: 0; text-align: left; font-weight: 600; text-decoration: underline;">Read more &darr;</button>
+    </div>
+    {% else %}
+    <p class="muted" style="grid-column: span 3;">No glossary terms available for this country.</p>
+    {% endfor %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('glossary-search');
+        const cards = document.querySelectorAll('.glossary-card');
+        
+        // Search functionality
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                cards.forEach(card => {
+                    const name = card.querySelector('.term-name').textContent.toLowerCase();
+                    const def = card.querySelector('.term-def').textContent.toLowerCase();
+                    if (name.includes(term) || def.includes(term)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Read more toggle
+        const readMoreBtns = document.querySelectorAll('.read-more-btn');
+        readMoreBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const card = e.target.closest('.glossary-card');
+                const example = card.querySelector('.term-example');
+                if (example.classList.contains('hidden')) {
+                    example.classList.remove('hidden');
+                    e.target.textContent = 'Read less ↑';
+                } else {
+                    example.classList.add('hidden');
+                    e.target.textContent = 'Read more ↓';
+                }
+            });
+        });
+
+        // Bookmarks logic
+        const bookmarks = JSON.parse(localStorage.getItem('electiq_bookmarks') || '[]');
+        document.querySelectorAll('.bookmark-btn').forEach(btn => {
+            const card = btn.closest('.glossary-card');
+            const termName = card.querySelector('.term-name').textContent;
+            
+            if (bookmarks.includes(termName)) {
+                btn.style.opacity = '1';
+                btn.style.textShadow = '0 0 5px gold';
+            }
+
+            btn.addEventListener('click', () => {
+                const index = bookmarks.indexOf(termName);
+                if (index > -1) {
+                    bookmarks.splice(index, 1);
+                    btn.style.opacity = '0.5';
+                    btn.style.textShadow = 'none';
+                } else {
+                    bookmarks.push(termName);
+                    btn.style.opacity = '1';
+                    btn.style.textShadow = '0 0 5px gold';
+                }
+                localStorage.setItem('electiq_bookmarks', JSON.stringify(bookmarks));
+            });
+        });
+    });
+</script>
+{% endblock %}

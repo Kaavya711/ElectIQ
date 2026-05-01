@@ -1,0 +1,52 @@
+{% extends "dashboard.html" %}
+
+{% block dashboard_content %}
+<div class="header-section" style="margin-bottom: 24px;">
+    <span class="badge">🤖 ASK AI</span>
+    <h2 style="margin: 16px 0 8px; font-size: 32px;">Ask Anything About {{ country.name }}'s Elections</h2>
+    <p class="muted" style="font-size: 14px;">Powered by Gemini · Educational only, not legal advice</p>
+</div>
+
+<div class="suggestions-wrap">
+    <div class="suggestion-chip">When does campaigning stop before polling day?</div>
+    <div class="suggestion-chip">Can I vote if I moved recently?</div>
+    <div class="suggestion-chip">What ID do I need to bring?</div>
+    <div class="suggestion-chip">How does vote counting work?</div>
+    <div class="suggestion-chip">What is the Model Code of Conduct?</div>
+</div>
+
+<div class="chat-container">
+    <div class="chat-messages" id="chat-messages">
+        <div class="chat-message bot">
+            <div class="message-bubble">
+                Hi! I'm ElectIQ AI. Ask me anything about {{ country.name }}'s election process. What would you like to know? 🗳️
+            </div>
+            <div class="message-time">Now</div>
+        </div>
+    </div>
+    
+    <div class="chat-input-area">
+        <div class="input-wrapper">
+            <textarea id="chat-input" placeholder="Ask about {{ country.name }}'s election process..." rows="1" maxlength="500"></textarea>
+            <button id="send-btn" class="btn-primary send-btn" aria-label="Send Message">
+                <!-- Simple SVG Send Icon -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+        <div class="char-counter" id="char-counter">0 / 500</div>
+    </div>
+</div>
+
+<!-- Load Chat CSS and JS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+
+<script>
+    document.getElementById('chat-input').addEventListener('input', function() {
+        document.getElementById('char-counter').textContent = `${this.value.length} / 500`;
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,106 @@
+/* Quiz Styles */
+.quiz-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.quiz-progress-wrap {
+    margin-bottom: 24px;
+}
+
+.quiz-progress-bar {
+    height: 8px;
+    background-color: var(--color-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.quiz-progress-fill {
+    height: 100%;
+    background-color: var(--color-accent);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.quiz-question {
+    font-size: 22px;
+    font-family: var(--font-heading);
+    color: var(--color-primary);
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.quiz-option {
+    width: 100%;
+    text-align: left;
+    padding: 16px 20px;
+    background-color: var(--color-white);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius);
+    font-size: 16px;
+    transition: var(--transition);
+}
+
+.quiz-option:hover:not(:disabled) {
+    background-color: #E8F5E9;
+}
+
+.quiz-option.correct {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+}
+
+.quiz-option.wrong {
+    background-color: #F44336;
+    color: white;
+    border-color: #F44336;
+}
+
+.quiz-explanation {
+    margin-top: 20px;
+    padding: 16px;
+    background-color: var(--color-bg);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--color-accent);
+    display: none;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.quiz-result-score {
+    font-size: 48px;
+    font-family: var(--font-heading);
+    color: var(--color-primary);
+    text-align: center;
+    margin: 20px 0;
+}
+
+.quiz-result-badge {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--color-accent);
+    margin-bottom: 30px;
+}
+
+.breakdown-item {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.breakdown-item:last-child {
+    border-bottom: none;
+}
