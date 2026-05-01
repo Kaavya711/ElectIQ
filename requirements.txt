@@ -18,6 +18,7 @@ google-auth==2.49.1
 google-cloud-firestore==2.27.0
 google-cloud-storage==3.4.1
 google-genai==1.73.1
+google-generativeai==0.8.4
 googleapis-common-protos==1.73.0
 grpcio==1.78.0
 grpcio-status==1.62.3
@@ -37,4 +38,11 @@ PyJWT==2.12.1
 pytest==8.0.0
 python-dotenv==1.0.0
 requests==2.31.0
-rich==13
+rich==13.9.4
+six==1.17.0
+tqdm==4.67.3
+urllib3==2.6.3
+webencodings==0.5.1
+Werkzeug==3.1.6
+WTForms==3.2.1
+wrapt==2.1.2
